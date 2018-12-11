@@ -1,4 +1,4 @@
-package com.example.thoma.richfridge;
+package org.ucll.ti.richfridge;
 
 import org.junit.Test;
 

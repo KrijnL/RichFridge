@@ -1,4 +1,4 @@
-package com.example.thoma.richfridge;
+package org.ucll.ti.richfridge;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.thoma.richfridge", appContext.getPackageName());
+        assertEquals("org.ucll.ti.richfridge", appContext.getPackageName());
     }
 }
