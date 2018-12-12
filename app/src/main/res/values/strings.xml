@@ -4,4 +4,12 @@
     <string name="hint_word">enter an ingredient</string>
     <string name="button_save">Save</string>
     <string name="empty_not_saved">Ingredient not saved because it is empty.</string>
+    <string name="ingredient_image_placeholder">Ingredient image</string>
+    <string name="recipes">Recipes</string>
+    <string name="fridge">My Fridge</string>
+
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
 </resources>
