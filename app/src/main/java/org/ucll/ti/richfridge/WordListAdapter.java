@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.Collections;
@@ -31,18 +32,23 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
 
     class WordViewHolder extends RecyclerView.ViewHolder {
         private final TextView wordItemView;
+        private Button deleteButton;
+
 
         private WordViewHolder(View itemView) {
             super(itemView);
-            wordItemView = itemView.findViewById(R.id.textView);
+            wordItemView = itemView.findViewById(R.id.ingredient_text);
+            deleteButton = itemView.findViewById(R.id.delete_button);
         }
     }
 
+    private WordViewModel model;
     private final LayoutInflater mInflater;
     private List<Word> mWords = Collections.emptyList(); // Cached copy of words
 
-    WordListAdapter(Context context) {
+    WordListAdapter(Context context, WordViewModel viewModel) {
         mInflater = LayoutInflater.from(context);
+        this.model = viewModel;
     }
 
     @Override
@@ -55,6 +61,7 @@ public class WordListAdapter extends RecyclerView.Adapter<WordListAdapter.WordVi
     public void onBindViewHolder(WordViewHolder holder, int position) {
         Word current = mWords.get(position);
         holder.wordItemView.setText(current.getWord());
+        holder.deleteButton.setOnClickListener(new DeleteIngredientListener(current, model));
     }
 
     void setWords(List<Word> words) {

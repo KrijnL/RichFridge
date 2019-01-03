@@ -8,20 +8,34 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
         android:background="@android:color/darker_gray"
-        tools:layout_editor_absoluteY="48dp"
+        app:layout_constraintBottom_toTopOf="@+id/button_find_recipes"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/recyclerview_ingredient" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/button_find_recipes"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerview"
         app:srcCompat="@drawable/ic_add_black_24dp" />
+
+    <Button
+        android:id="@+id/button_find_recipes"
+        android:layout_width="311dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:text="@string/btn_find_recipes"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="16dp" />
 
 </android.support.constraint.ConstraintLayout>

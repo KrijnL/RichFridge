@@ -19,6 +19,8 @@ package org.ucll.ti.richfridge;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -52,12 +54,19 @@ class WordRepository {
     // Like this, Room ensures that you're not doing any long running operations on the main
     // thread, blocking the UI.
     void insert(Word word) {
-        new insertAsyncTask(mWordDao).execute(word);
+        try{
+            new insertAsyncTask(mWordDao).execute(word);
+        } catch(Exception e){
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
+
+    void delete(Word word) { new deleteAsyncTask(mWordDao).execute(word); }
 
     private static class insertAsyncTask extends AsyncTask<Word, Void, Void> {
 
         private WordDao mAsyncTaskDao;
+        private boolean exception = false;
 
         insertAsyncTask(WordDao dao) {
             mAsyncTaskDao = dao;
@@ -65,7 +74,25 @@ class WordRepository {
 
         @Override
         protected Void doInBackground(final Word... params) {
-            mAsyncTaskDao.insert(params[0]);
+            try {
+                mAsyncTaskDao.insert(params[0]);
+            } catch(Exception e){
+                Log.e("WordRepo", "Word already exists");
+                exception = true;
+            }
+            return null;
+        }
+
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<Word, Void, Void> {
+        private WordDao mAsyncTaskDao;
+
+        deleteAsyncTask(WordDao dao ){ mAsyncTaskDao = dao; }
+
+        @Override
+        protected Void doInBackground(final Word... words) {
+            mAsyncTaskDao.delete(words[0]);
             return null;
         }
     }

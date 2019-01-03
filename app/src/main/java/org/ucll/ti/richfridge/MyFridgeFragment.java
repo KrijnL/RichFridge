@@ -6,12 +6,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import java.util.List;
@@ -24,18 +29,17 @@ public class MyFridgeFragment extends Fragment {
 
     private WordViewModel mWordViewModel;
     WordListAdapter adapter;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {
         // Defines the xml file for the fragment
 
-
-
-        adapter = new WordListAdapter(getContext());
-
-
         // Get a new or existing ViewModel from the ViewModelProvider.
         mWordViewModel = ViewModelProviders.of(this).get(WordViewModel.class);
+
+        adapter = new WordListAdapter(getContext(), mWordViewModel);
+
+
+
 
         // Add an observer on the LiveData returned by getAlphabetizedWords.
         // The onChanged() method fires when the observed data changes and the activity is
@@ -69,20 +73,46 @@ public class MyFridgeFragment extends Fragment {
                 startActivityForResult(intent, NEW_WORD_ACTIVITY_REQUEST_CODE);
             }
         });
+
+        Button findBtn = view.findViewById(R.id.button_find_recipes);
+        findBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceFragmentWithAnimation(new RecipesFragment(), "fridge");
+
+                getActivity().setTitle("Recipes");
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == NEW_WORD_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            Word word = new Word(data.getStringExtra(NewWordActivity.EXTRA_REPLY));
-            mWordViewModel.insert(word);
+            Word word = new Word(data.getStringExtra(NewWordActivity.EXTRA_REPLY).toLowerCase());
+            try {
+                mWordViewModel.insert(word);
+            } catch(Exception e){
+                Toast.makeText(getContext(),e.getMessage(), Toast.LENGTH_LONG).show();
+            }
         } else {
             Toast.makeText(
                     getContext(),
                     R.string.empty_not_saved,
                     Toast.LENGTH_LONG).show();
         }
+    }
+
+    public WordViewModel getmWordViewModel(){
+        return mWordViewModel;
+    }
+
+    public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag){
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.addToBackStack(tag);
+        transaction.commit();
     }
 
 }

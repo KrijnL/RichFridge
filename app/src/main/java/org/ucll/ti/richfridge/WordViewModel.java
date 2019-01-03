@@ -47,6 +47,12 @@ public class WordViewModel extends AndroidViewModel {
     }
 
     void insert(Word word) {
-        mRepository.insert(word);
+        try{
+            mRepository.insert(word);
+        }catch(Exception e){
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
     }
+
+    void delete(Word word) {mRepository.delete(word); }
 }
