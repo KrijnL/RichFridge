@@ -57,13 +57,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        //Set standard fragment to fridge view
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        MyFridgeFragment fridgeFragment = new MyFridgeFragment();
-        fragmentTransaction.add(R.id.content_frame, fridgeFragment);
-        fragmentTransaction.commit();
+
+
 
         //Toolbar + menu knop
         toolbar = findViewById(R.id.toolbar);
@@ -92,7 +88,18 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
-        navigationView.getMenu().getItem(0).setChecked(true);
+        if(null == savedInstanceState) {
+            //Set standard fragment to fridge view
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            MyFridgeFragment fridgeFragment = new MyFridgeFragment();
+            fragmentTransaction.add(R.id.content_frame, fridgeFragment);
+            fragmentTransaction.commit();
+
+            navigationView.getMenu().getItem(0).setChecked(true);
+        }
+
     }
 
     @Override
@@ -121,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_recipes:
                 fragmentClass = RecipesFragment.class;
+                break;
+            case R.id.nav_share:
+                fragmentClass = ShareFragment.class;
                 break;
             default:
                 fragmentClass = MyFridgeFragment.class;
