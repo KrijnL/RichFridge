@@ -3,5 +3,26 @@
 
     <string name="hint_word">enter an ingredient</string>
     <string name="button_save">Save</string>
-    <string name="empty_not_saved">Ingredient not saved because it is empty.</string>
+    <string name="empty_not_saved">Ingredient not saved.</string>
+    <string name="ingredient_image_placeholder">Ingredient image</string>
+    <string name="recipes">Recipes</string>
+    <string name="fridge">Fridge</string>
+    <string name="share">Share</string>
+
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="btn_find_recipes">Find Recipes</string>
+    <string name="btn_add_ingredient">Add Ingredient</string>
+
+    <string name="delete"> - </string>
+
+    <string name="intro">Welcome to the RichFridge app.</string>
+
+    <string name="tuto">Find the ingredients in your fridge in the dropdown menu, or add a custom ingredient by pressing the &#43; button.</string>
+
+    <string name="btn_read_qr">Scan QR code</string>
+    <string name="tuto_scan">You can scan a QR code created by another user to instantly find a recipe they want to share with you.</string>
+
 </resources>
