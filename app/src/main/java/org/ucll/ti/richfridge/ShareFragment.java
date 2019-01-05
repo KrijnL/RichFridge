@@ -1,12 +1,19 @@
 package org.ucll.ti.richfridge;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
@@ -20,6 +27,9 @@ public class ShareFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final int NEW_SCAN_ACTIVITY_REQUEST_CODE = 1;
+
+    private TextView text;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -68,6 +78,38 @@ public class ShareFragment extends Fragment {
         //if (mListener != null) {
         //    mListener.onFragmentInteraction(uri);
         //}
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        text = view.findViewById(R.id.tex_qr_code);
+
+        Button scanButton = view.findViewById(R.id.btn_scan_qr);
+        scanButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), QrCodeScanner.class);
+                startActivityForResult(intent, NEW_SCAN_ACTIVITY_REQUEST_CODE);
+            }
+        });
+    }
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_SCAN_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
+            String key = data.getStringExtra("KEY_QR_CODE");
+            try {
+                text.setText(key);
+            } catch(Exception e){
+                Toast.makeText(getContext(),e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(
+                    getContext(),
+                    R.string.no_qr_code,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
     @Override

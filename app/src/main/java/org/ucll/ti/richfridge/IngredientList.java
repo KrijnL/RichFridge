@@ -13,7 +13,7 @@ public class IngredientList {
         add("beef");
         add("onion");
         add("potato");
-        add("brocolli");
+        add("broccoli");
         add("salmon");
         add("milk");
         add("bacon");

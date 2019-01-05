@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 /**
@@ -68,6 +71,21 @@ public class RecipesFragment extends Fragment {
 
         adapter = new RecipeAdapter(getContext());
 
+        adapter.setOnItemClickListener(new RecipeAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Log.e("ONITEMCLICK POS", position+"");
+                Recipe r  = mRecipeViewModel.getRecipes().get(position);
+                Toast.makeText(getContext(), r.getTitle(), Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onItemLongClick(int position, View v) {
+
+            }
+        });
+
         adapter.setRecipes(mRecipeViewModel.getRecipes());
 
 
@@ -99,6 +117,14 @@ public class RecipesFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
 
+    }
+
+    public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag){
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+        transaction.replace(R.id.content_frame, fragment);
+        transaction.addToBackStack(tag);
+        transaction.commit();
     }
 
 

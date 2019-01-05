@@ -46,7 +46,6 @@ public class MyFridgeFragment extends Fragment {
         // Defines the xml file for the fragment
 
         // Get a new or existing ViewModel from the ViewModelProvider.
-        if(null == savedInstanceState) {
             mWordViewModel = ViewModelProviders.of(this).get(WordViewModel.class);
 
             adapter = new WordListAdapter(getContext(), mWordViewModel, this);
@@ -71,7 +70,7 @@ public class MyFridgeFragment extends Fragment {
                 }
             });
 
-        }
+
 
         return inflater.inflate(R.layout.fragment_my_fridge, parent, false);
 
@@ -89,6 +88,7 @@ public class MyFridgeFragment extends Fragment {
         addListenerOnAddIngredientButton();
 
         RecyclerView recyclerView = view.findViewById(R.id.recyclerview);
+        Log.e("VIEW", recyclerView.toString());
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 

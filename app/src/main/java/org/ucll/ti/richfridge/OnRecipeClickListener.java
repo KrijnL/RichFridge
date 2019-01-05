@@ -1,4 +1,12 @@
 package org.ucll.ti.richfridge;
 
-public class OnRecipeClickListener {
+import android.view.View;
+
+public class OnRecipeClickListener implements View.OnClickListener {
+
+
+    @Override
+    public void onClick(View v) {
+
+    }
 }

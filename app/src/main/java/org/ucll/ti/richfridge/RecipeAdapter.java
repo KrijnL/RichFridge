@@ -25,11 +25,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private final String TAG = "RecipeAdapter";
 
 
+    private static ClickListener clickListener;
+
+
     RecipeAdapter(Context context) {mInflater = LayoutInflater.from(context);}
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View itemView = mInflater.inflate(R.layout.recyclerview_recipe, viewGroup, false);
+
         return new RecipeViewHolder(itemView);
     }
 
@@ -48,7 +52,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         return mRecipes.size();
     }
 
-    class RecipeViewHolder extends RecyclerView.ViewHolder {
+    class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private ImageView image;
         private TextView title;
@@ -56,9 +60,22 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
         public RecipeViewHolder(@NonNull View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
             image = itemView.findViewById(R.id.recipe_img);
             title = itemView.findViewById(R.id.recipe_title);
             description = itemView.findViewById(R.id.recipe_description);
+        }
+
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            clickListener.onItemLongClick(getAdapterPosition(), v);
+            return false;
         }
     }
 
@@ -92,4 +109,15 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             bmImage.setImageBitmap(result);
         }
     }
+
+    public void setOnItemClickListener(ClickListener clickListener) {
+        RecipeAdapter.clickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClick(int position, View v);
+        void onItemLongClick(int position, View v);
+    }
+
+
 }
