@@ -10,6 +10,7 @@ public class Recipe {
     private String description;
     private String imageURL;
     private List<String> ingredients;
+    private List<String> steps;
 
     public Recipe(String title, String description, String imageURL){
         this.title = title;
@@ -18,10 +19,20 @@ public class Recipe {
         setId(-1);
     }
 
+    public Recipe(String title, String description, String imageURL,List<String> ingredients, List<String> steps){
+        this.title = title;
+        this.description = description;
+        this.imageURL = imageURL;
+        this.ingredients = ingredients;
+        this.steps = steps;
+        setId(-1);
+    }
+
     public Recipe(int id, String title, String description, String imageURL){
         this(title, description, imageURL);
         setId(id);
     }
+
 
     public void setId(int id){
         this.id = id;
@@ -33,6 +44,8 @@ public class Recipe {
     public String getImageURL(){return imageURL;}
     public void setIngredients(List<String> ingredients){this.ingredients = ingredients;}
     public List<String> getIngredients(){ return ingredients;}
+    public void setSteps(List<String> steps){this.steps = steps;}
+    public List<String> getSteps(){ return steps;}
 
     public void addIngredient(String ingredient){ingredients.add(ingredient);}
     public void deleteIngredient(String ingredient){ingredients.remove(ingredient);}

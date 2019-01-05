@@ -18,6 +18,7 @@ public class IngredientList {
         add("milk");
         add("bacon");
         add("eggs");
+        add("pasta");
 
     }
 
