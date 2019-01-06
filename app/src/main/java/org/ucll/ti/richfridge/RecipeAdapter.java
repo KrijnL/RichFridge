@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     private final LayoutInflater mInflater;
     private List<Recipe> mRecipes = Collections.emptyList(); // Cached copy of words
+    private Context context;
 
     private final String TAG = "RecipeAdapter";
 
@@ -28,7 +30,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
     private static ClickListener clickListener;
 
 
-    RecipeAdapter(Context context) {mInflater = LayoutInflater.from(context);}
+    RecipeAdapter(Context context) {
+        mInflater = LayoutInflater.from(context);
+        this.context = context;
+    }
     @NonNull
     @Override
     public RecipeViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -43,6 +48,11 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
         Recipe current = mRecipes.get(position);
         holder.title.setText(current.getTitle());
         holder.description.setText(current.getDescription());
+        if(current.isFavorite()){
+            holder.favo.setImageDrawable(context.getDrawable(R.drawable.ic_favorite_red_24dp));
+        }else{
+
+        }
         new DownloadImageTask(holder.image)
                 .execute(current.getImageURL());
     }
@@ -54,7 +64,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
 
     class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
-        private ImageView image;
+        private ImageView image, favo;
         private TextView title;
         private TextView description;
 
@@ -65,6 +75,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeView
             image = itemView.findViewById(R.id.recipe_img);
             title = itemView.findViewById(R.id.recipe_title);
             description = itemView.findViewById(R.id.recipe_description);
+            favo = itemView.findViewById(R.id.recipe_favo);
         }
 
         @Override

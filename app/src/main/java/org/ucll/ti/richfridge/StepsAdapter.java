@@ -37,6 +37,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
     @Override
     public void onBindViewHolder(@NonNull StepViewHolder stepViewHolder, int i) {
         stepViewHolder.textView.setText(steps.get(i));
+        stepViewHolder.number.setText(i+1+".   ");
     }
 
     @Override
@@ -50,12 +51,12 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepViewHold
 
     class StepViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView image;
-        TextView textView;
+
+        TextView textView, number;
 
         public StepViewHolder(@NonNull View itemView) {
             super(itemView);
-            image = itemView.findViewById(R.id.steps_bullet);
+            number = itemView.findViewById(R.id.steps_number);
             textView = itemView.findViewById(R.id.steps_text);
         }
     }

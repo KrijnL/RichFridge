@@ -8,13 +8,13 @@ import android.support.annotation.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RecipeViewModel extends AndroidViewModel {
 
 
     private RecipeDbInMemory mRecipeDb;
     private List<Recipe> mRecipes;
-    private boolean searchFavorites;
 
 
     public RecipeViewModel(@NonNull Application application) {
@@ -28,7 +28,7 @@ public class RecipeViewModel extends AndroidViewModel {
     public List<Recipe> searchRecipes(List<String> ingredients) {
         List<Recipe> recipes = new ArrayList<>();
 
-        if(!searchFavorites) {
+
 
             for (Recipe r : mRecipes) {
                 for (String s : ingredients) {
@@ -43,9 +43,7 @@ public class RecipeViewModel extends AndroidViewModel {
 
                 recipes.add(r);
             }
-        }else{
-            recipes = getFavorites();
-        }
+
         return recipes;
     }
 
@@ -63,7 +61,16 @@ public class RecipeViewModel extends AndroidViewModel {
         mRecipeDb.setFavorite(id);
     }
 
-    public void setSearchFavorites(boolean value){
-        this.searchFavorites = value;
+    public Recipe getRecipe(int id) {return mRecipeDb.get(id);}
+
+    public Recipe getRandomRecipe(){
+        Random rand = new Random();
+
+        int random = rand.nextInt(mRecipes.size());
+
+
+        return mRecipes.get(random);
     }
+
+
 }

@@ -2,6 +2,7 @@ package org.ucll.ti.richfridge;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import com.dgreenhalgh.android.simpleitemdecoration.linear.DividerItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +41,8 @@ public class RecipesFragment extends Fragment {
     private List<String> ingredients;
     private DetailViewModel mDetailViewModel;
 
+    private boolean favorite;
+
 
     private static final String TAG = "recipesFragment";
 
@@ -56,10 +62,10 @@ public class RecipesFragment extends Fragment {
      * @return A new instance of fragment RecipesFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static RecipesFragment newInstance() {
+    public static RecipesFragment newInstance(boolean favo) {
         RecipesFragment fragment = new RecipesFragment();
         Bundle args = new Bundle();
-
+        args.putBoolean("favorite", favo);
         fragment.setArguments(args);
         return fragment;
     }
@@ -68,7 +74,7 @@ public class RecipesFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-
+            this.favorite = getArguments().getBoolean("favorite", false);
         }
         mRecipeViewModel = ViewModelProviders.of(getActivity()).get(RecipeViewModel.class);
         mWordViewModel = ViewModelProviders.of(getActivity()).get(WordViewModel.class);
@@ -80,7 +86,6 @@ public class RecipesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        getActivity().setTitle("Recipes");
 
 
         List<String> ingredients = new ArrayList<>();
@@ -88,7 +93,14 @@ public class RecipesFragment extends Fragment {
             ingredients.add(w.getWord());
         }
 
-        recipes = mRecipeViewModel.searchRecipes(ingredients);
+
+        if(favorite) {
+            getActivity().setTitle("Favorites");
+            recipes = mRecipeViewModel.getFavorites();
+        }else{
+            getActivity().setTitle("Recipes");
+            recipes = mRecipeViewModel.searchRecipes(ingredients);
+        }
 
 
         adapter = new RecipeAdapter(getContext());
@@ -128,11 +140,19 @@ public class RecipesFragment extends Fragment {
 
         NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
 
-        navigationView.getMenu().getItem(1).setChecked(true);
-
+        if(favorite) {
+            Log.e("ISFAVORITE??", "YES");
+            navigationView.setCheckedItem(R.id.nav_favo);
+        }else{
+            navigationView.setCheckedItem(R.id.nav_recipes);
+        }
         RecyclerView recyclerView = view.findViewById(R.id.recipe_recyclerview);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.diveder);
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
     }
 
     @Override

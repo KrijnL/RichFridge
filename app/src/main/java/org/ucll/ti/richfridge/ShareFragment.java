@@ -1,5 +1,6 @@
 package org.ucll.ti.richfridge;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -7,6 +8,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,8 @@ public class ShareFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     public static final int NEW_SCAN_ACTIVITY_REQUEST_CODE = 1;
+    private DetailViewModel mDetailViewModel;
+    private RecipeViewModel mRecipeViewModel;
 
     private TextView text;
 
@@ -66,6 +71,9 @@ public class ShareFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        mDetailViewModel = ViewModelProviders.of(getActivity()).get(DetailViewModel.class);
+        mRecipeViewModel = ViewModelProviders.of(getActivity()).get(RecipeViewModel.class);
     }
 
     @Override
@@ -109,8 +117,12 @@ public class ShareFragment extends Fragment {
             String key = data.getStringExtra("KEY_QR_CODE");
             try {
                 text.setText(key);
+                Recipe r = mRecipeViewModel.getRecipe(Integer.parseInt(key));
+                mDetailViewModel.setRecipe(r);
+                Toast.makeText(getContext(),"Recipe found: " + r.getTitle(), Toast.LENGTH_LONG).show();
+                replaceFragmentWithAnimation(new DetailsFragment(), "share");
             } catch(Exception e){
-                Toast.makeText(getContext(),e.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(),"Invalid QR code", Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(
@@ -146,4 +158,20 @@ public class ShareFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }*/
+
+    public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag){
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        if(fragment instanceof MyFridgeFragment){
+            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+        }else {
+
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            transaction.replace(R.id.content_frame, fragment);
+            transaction.addToBackStack(tag);
+            transaction.commit();
+        }
+    }
 }

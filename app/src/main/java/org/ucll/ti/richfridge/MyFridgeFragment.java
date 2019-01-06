@@ -3,6 +3,7 @@ package org.ucll.ti.richfridge;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -10,6 +11,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -22,6 +24,7 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.dgreenhalgh.android.simpleitemdecoration.linear.DividerItemDecoration;
 import com.dgreenhalgh.android.simpleitemdecoration.linear.EndOffsetItemDecoration;
 
 import java.util.ArrayList;
@@ -61,7 +64,22 @@ public class MyFridgeFragment extends Fragment {
             ingredients = new ArrayList<>();
 
             for (String s : clone) {
-                ingredients.add(s);
+                boolean found = false;
+                if (mWordViewModel.getAllWords().getValue() != null) {
+
+
+                    for (Word word : mWordViewModel.getAllWords().getValue()) {
+                        if (word.getWord().equals(s)) {
+                            Log.e("WORD FOUND", word.getWord());
+                            found = true;
+                            break;
+                        }
+                    }
+
+                }
+                if (!found) {
+                    ingredients.add(s);
+                }
             }
 
 
@@ -104,6 +122,10 @@ public class MyFridgeFragment extends Fragment {
 
         int offsetPx = 50;
 
+        Drawable dividerDrawable = ContextCompat.getDrawable(getContext(), R.drawable.diveder);
+
+        recyclerView.addItemDecoration(new DividerItemDecoration(dividerDrawable));
+
         recyclerView.addItemDecoration(new EndOffsetItemDecoration(offsetPx));
         getActivity().setTitle("Fridge");
 
@@ -121,7 +143,7 @@ public class MyFridgeFragment extends Fragment {
         findBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mRecipeViewModel.setSearchFavorites(false);
+
                 Fragment recipesFragment = new RecipesFragment();
                 /*List<String> ingredients = new ArrayList<>();
                 for(Word w : mWordViewModel.getAllWords().getValue()){

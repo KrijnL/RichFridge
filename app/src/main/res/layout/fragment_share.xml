@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_bg"
     tools:context=".ShareFragment">
 
     <!-- TODO: Update blank fragment layout -->
@@ -15,11 +16,15 @@
         android:layout_marginStart="1dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/gradient_drawable_toolbar"
         android:text="@string/btn_read_qr"
+        android:textColor="@color/primary_text"
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        android:padding="8dp"
+        android:elevation="4dp"/>
 
     <TextView
         android:id="@+id/tex_qr_code"
@@ -31,6 +36,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/tuto_scan"
         android:textAlignment="center"
+        android:textColor="@color/primary_text"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/btn_scan_qr"
         app:layout_constraintEnd_toEndOf="parent"

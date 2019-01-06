@@ -162,7 +162,8 @@ public class RecipeDbInMemory {
             }
         }
         Log.e(TAG, "cannot find a recipe with that id");
-        return null;
+        throw new IllegalArgumentException("not found");
+        //return null;
     }
 
     public List<Recipe> getAll() {return recipes;}

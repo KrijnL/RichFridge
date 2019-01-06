@@ -18,7 +18,10 @@ package org.ucll.ti.richfridge;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -50,6 +53,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MyActivity";
 
     private RecipeViewModel mRecipeViewModel;
+    private DetailViewModel mDetailViewModel;
+
+
+    private SensorManager mSensorManager;
+    private Sensor mAccelerometer;
+    private ShakeDetector mShakeDetector;
 
 
 
@@ -105,6 +114,26 @@ public class MainActivity extends AppCompatActivity {
 
         mRecipeViewModel = ViewModelProviders.of(this).get(RecipeViewModel.class);
 
+        mDetailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
+
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometer = mSensorManager
+                .getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mShakeDetector = new ShakeDetector();
+        mShakeDetector.setOnShakeListener(new ShakeDetector.OnShakeListener() {
+
+            @Override
+            public void onShake(int count) {
+                /*
+                 * The following method, "handleShakeEvent(count):" is a stub //
+                 * method you would use to setup whatever you want done once the
+                 * device has been shook.
+                 */
+                handleShakeEvent(count);
+            }
+        });
+
     }
 
     @Override
@@ -127,27 +156,33 @@ public class MainActivity extends AppCompatActivity {
         // Create a new fragment and specify the fragment to show based on nav item clicked
         Fragment fragment = null;
         Class fragmentClass;
+        boolean favo = false;
         switch(menuItem.getItemId()) {
             case R.id.nav_fridge:
                 fragmentClass = MyFridgeFragment.class;
                 break;
             case R.id.nav_recipes:
                 fragmentClass = RecipesFragment.class;
-                mRecipeViewModel.setSearchFavorites(false);
+
                 break;
             case R.id.nav_share:
                 fragmentClass = ShareFragment.class;
                 break;
             case R.id.nav_favo:
                 fragmentClass = RecipesFragment.class;
-                mRecipeViewModel.setSearchFavorites(true);
+                favo = true;
                 break;
             default:
                 fragmentClass = MyFridgeFragment.class;
         }
 
         try {
-            fragment = (Fragment) fragmentClass.newInstance();
+            if (!favo) {
+                fragment = (Fragment) fragmentClass.newInstance();
+            }else{
+                fragment = RecipesFragment.newInstance(true);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -165,12 +200,45 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void replaceFragmentWithAnimation(android.support.v4.app.Fragment fragment, String tag){
-        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
-        transaction.replace(R.id.content_frame, fragment);
-        transaction.addToBackStack(tag);
-        transaction.commit();
+        FragmentManager fm = getSupportFragmentManager();
+        if(fragment instanceof MyFridgeFragment){
+            for(int i = 0; i < fm.getBackStackEntryCount(); ++i) {
+                fm.popBackStack();
+            }
+        }else {
+
+            FragmentTransaction transaction = fm.beginTransaction();
+            transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right);
+            transaction.replace(R.id.content_frame, fragment);
+            transaction.addToBackStack(tag);
+            transaction.commit();
+        }
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Add the following line to register the Session Manager Listener onResume
+        mSensorManager.registerListener(mShakeDetector, mAccelerometer,	SensorManager.SENSOR_DELAY_UI);
+    }
+
+    @Override
+    public void onPause() {
+        // Add the following line to unregister the Sensor Manager onPause
+        mSensorManager.unregisterListener(mShakeDetector);
+        super.onPause();
+    }
+
+    public void handleShakeEvent(int count){
+        if(count % 2 == 0){
+            Recipe r = mRecipeViewModel.getRandomRecipe();
+            mDetailViewModel.setRecipe(r);
+            Toast.makeText(this, "Showing random recipe:" + r.getTitle(), Toast.LENGTH_LONG).show();
+
+            replaceFragmentWithAnimation(new DetailsFragment(), "main");
+        }
+    }
+
 
 
 
