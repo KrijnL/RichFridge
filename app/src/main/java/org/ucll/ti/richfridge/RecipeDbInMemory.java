@@ -88,7 +88,7 @@ public class RecipeDbInMemory {
         baconSteps.add("consectetur adipiscing elit");
         baconSteps.add("sed do eiusmod tempor incididunt ut labore et dolore magna aliqua");
 
-        Recipe pasta = new Recipe("pasta", "a lovely pasta",
+        Recipe pasta = new Recipe("Pasta", "a lovely pasta",
                 "https://cdn-image.myrecipes.com/sites/default/files/styles/medium_2x/public/image/lighten-up-america/pasta-vodka-cream-sauce-ck-x.jpg",pastaIngredients,pastaSteps);
 
         Recipe pizza = new Recipe( "Pizza", "Classical italian dish",
@@ -166,4 +166,12 @@ public class RecipeDbInMemory {
     }
 
     public List<Recipe> getAll() {return recipes;}
+
+    public void setFavorite(int id){
+        for(Recipe r : recipes){
+            if(r.getId() == id){
+                r.setFavorite(!r.isFavorite());
+            }
+        }
+    }
 }

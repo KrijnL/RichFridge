@@ -9,6 +9,7 @@
     <string name="recipes">Recipes</string>
     <string name="fridge">Fridge</string>
     <string name="share">Share</string>
+    <string name="favorites">Favorites</string>
 
 
     <string name="drawer_open">Open navigation drawer</string>
@@ -25,6 +26,12 @@
 
     <string name="btn_read_qr">Scan QR code</string>
     <string name="tuto_scan">You can scan a QR code created by another user to instantly find a recipe they want to share with you.</string>
+
+    <string name="detail_steps">Steps</string>
+    <string name="detail_ingredients">Ingredients</string>
+
+    <string name="tap_to_share">Tap here to share</string>
+    <string name="share_info">Another person using this app can scan the QR code to instantly view the same recipe, or you can send the QR code to a friend!</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -1,54 +1,78 @@
 package org.ucll.ti.richfridge;
 
+import android.Manifest;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+
+import static android.app.Activity.RESULT_OK;
 
 
 /**
  * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link QrCodeFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link QrCodeFragment#newInstance} factory method to
- * create an instance of this fragment.
  *
+ * Use the {@link ShareFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
 public class QrCodeFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    public static final int NEW_SCAN_ACTIVITY_REQUEST_CODE = 1;
+
+    private TextView text;
+    private ImageView image;
+    private Button shareBtn;
+    private QrCodeViewModel mQrCodeViewModel;
+
+    private static final String TAG = "QrCodeFragment";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private OnFragmentInteractionListener mListener;
+    //private OnFragmentInteractionListener mListener;
+
+    public QrCodeFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment QrCodeFragment.
+     *
+     * @return A new instance of fragment ShareFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static QrCodeFragment newInstance(String param1, String param2) {
+    public static QrCodeFragment newInstance() {
         QrCodeFragment fragment = new QrCodeFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
-    }
-    public QrCodeFragment() {
-        // Required empty public constructor
     }
 
     @Override
@@ -58,6 +82,7 @@ public class QrCodeFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        mQrCodeViewModel = ViewModelProviders.of(getActivity()).get(QrCodeViewModel.class);
     }
 
     @Override
@@ -69,26 +94,56 @@ public class QrCodeFragment extends Fragment {
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
+        //if (mListener != null) {
+        //    mListener.onFragmentInteraction(uri);
+        //}
     }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState){
+        super.onViewCreated(view, savedInstanceState);
+
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+
+        navigationView.getMenu().getItem(2).setChecked(true);
+
+        image = view.findViewById(R.id.qr_code_img);
+
+        image.setImageBitmap(mQrCodeViewModel.getQrCode());
+
+        shareBtn = view.findViewById(R.id.qr_share_btn);
+
+        shareBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isStoragePermissionGranted()) {
+                    share();
+                }
+            }
+        });
+
+
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+        //mListener = null;
     }
 
     /**
@@ -101,8 +156,41 @@ public class QrCodeFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface OnFragmentInteractionListener {
+    /*public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }*/
+
+    public  boolean isStoragePermissionGranted() {
+
+            if (ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if(grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            Log.v(TAG,"Permission: "+permissions[0]+ "was "+grantResults[0]);
+            //resume tasks needing this permission
+            share();
+        }
+    }
+
+
+    public void share(){
+        final Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("image/jpg");
+        shareIntent.putExtra(Intent.EXTRA_STREAM, getImageUri(getContext(), mQrCodeViewModel.getQrCode()));
+        startActivity(Intent.createChooser(shareIntent, "Share image using"));
     }
 }

@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,9 @@ public class MyFridgeFragment extends Fragment {
     public static final int NEW_WORD_ACTIVITY_REQUEST_CODE = 1;
 
     private WordViewModel mWordViewModel;
+    private RecipeViewModel mRecipeViewModel;
+
+
     private WordListAdapter adapter;
     private IngredientList ingredientList;
     private List<String> ingredients;
@@ -46,7 +50,9 @@ public class MyFridgeFragment extends Fragment {
         // Defines the xml file for the fragment
 
         // Get a new or existing ViewModel from the ViewModelProvider.
-            mWordViewModel = ViewModelProviders.of(this).get(WordViewModel.class);
+            mWordViewModel = ViewModelProviders.of(getActivity()).get(WordViewModel.class);
+
+            mRecipeViewModel = ViewModelProviders.of(getActivity()).get(RecipeViewModel.class);
 
             adapter = new WordListAdapter(getContext(), mWordViewModel, this);
 
@@ -83,6 +89,10 @@ public class MyFridgeFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
+
 
         fillSpinnerWithIngredients();
         addListenerOnAddIngredientButton();
@@ -111,7 +121,14 @@ public class MyFridgeFragment extends Fragment {
         findBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                replaceFragmentWithAnimation(new RecipesFragment(), "fridge");
+                mRecipeViewModel.setSearchFavorites(false);
+                Fragment recipesFragment = new RecipesFragment();
+                /*List<String> ingredients = new ArrayList<>();
+                for(Word w : mWordViewModel.getAllWords().getValue()){
+                    ingredients.add(w.getWord());
+                }
+                ((RecipesFragment) recipesFragment).setIngredients(ingredients);*/
+                replaceFragmentWithAnimation(recipesFragment, "fridge");
 
                 getActivity().setTitle("Recipes");
             }

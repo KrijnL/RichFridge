@@ -5,7 +5,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -82,6 +84,12 @@ public class ShareFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState){
+        super.onViewCreated(view, savedInstanceState);
+
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+
+        navigationView.getMenu().getItem(2).setChecked(true);
+
         text = view.findViewById(R.id.tex_qr_code);
 
         Button scanButton = view.findViewById(R.id.btn_scan_qr);

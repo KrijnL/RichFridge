@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MyActivity";
 
+    private RecipeViewModel mRecipeViewModel;
+
 
 
     @Override
@@ -100,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
             navigationView.getMenu().getItem(0).setChecked(true);
         }
 
+
+        mRecipeViewModel = ViewModelProviders.of(this).get(RecipeViewModel.class);
+
     }
 
     @Override
@@ -128,9 +133,14 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_recipes:
                 fragmentClass = RecipesFragment.class;
+                mRecipeViewModel.setSearchFavorites(false);
                 break;
             case R.id.nav_share:
                 fragmentClass = ShareFragment.class;
+                break;
+            case R.id.nav_favo:
+                fragmentClass = RecipesFragment.class;
+                mRecipeViewModel.setSearchFavorites(true);
                 break;
             default:
                 fragmentClass = MyFridgeFragment.class;

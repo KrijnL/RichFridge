@@ -6,15 +6,20 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -27,6 +32,10 @@ public class RecipesFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private RecipeViewModel mRecipeViewModel;
     private RecipeAdapter adapter;
+    private WordViewModel mWordViewModel;
+    private List<Recipe> recipes;
+    private List<String> ingredients;
+    private DetailViewModel mDetailViewModel;
 
 
     private static final String TAG = "recipesFragment";
@@ -61,13 +70,26 @@ public class RecipesFragment extends Fragment {
         if (getArguments() != null) {
 
         }
+        mRecipeViewModel = ViewModelProviders.of(getActivity()).get(RecipeViewModel.class);
+        mWordViewModel = ViewModelProviders.of(getActivity()).get(WordViewModel.class);
+        mDetailViewModel = ViewModelProviders.of(getActivity()).get(DetailViewModel.class);
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mRecipeViewModel = ViewModelProviders.of(this).get(RecipeViewModel.class);
+
+        getActivity().setTitle("Recipes");
+
+
+        List<String> ingredients = new ArrayList<>();
+        for(Word w : mWordViewModel.getAllWords().getValue()){
+            ingredients.add(w.getWord());
+        }
+
+        recipes = mRecipeViewModel.searchRecipes(ingredients);
+
 
         adapter = new RecipeAdapter(getContext());
 
@@ -75,8 +97,10 @@ public class RecipesFragment extends Fragment {
             @Override
             public void onItemClick(int position, View v) {
                 Log.e("ONITEMCLICK POS", position+"");
-                Recipe r  = mRecipeViewModel.getRecipes().get(position);
+                Recipe r  = recipes.get(position);
+                mDetailViewModel.setRecipe(r);
                 Toast.makeText(getContext(), r.getTitle(), Toast.LENGTH_LONG).show();
+                replaceFragmentWithAnimation(new DetailsFragment(), "Recipes");
 
             }
 
@@ -86,7 +110,7 @@ public class RecipesFragment extends Fragment {
             }
         });
 
-        adapter.setRecipes(mRecipeViewModel.getRecipes());
+        adapter.setRecipes(recipes);
 
 
         // Inflate the layout for this fragment
@@ -101,6 +125,10 @@ public class RecipesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        NavigationView navigationView = getActivity().findViewById(R.id.nav_view);
+
+        navigationView.getMenu().getItem(1).setChecked(true);
 
         RecyclerView recyclerView = view.findViewById(R.id.recipe_recyclerview);
         recyclerView.setAdapter(adapter);
@@ -125,6 +153,10 @@ public class RecipesFragment extends Fragment {
         transaction.replace(R.id.content_frame, fragment);
         transaction.addToBackStack(tag);
         transaction.commit();
+    }
+
+    public void setIngredients(List<String> ingredients){
+        this.ingredients = ingredients;
     }
 
 

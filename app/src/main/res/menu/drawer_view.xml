@@ -7,7 +7,7 @@
             android:title="@string/fridge" />
         <item
             android:id="@+id/nav_recipes"
-            android:icon="@drawable/ic_favorite_black_24dp"
+            android:icon="@drawable/ic_local_dining_black_24dp"
             android:title="@string/recipes" />
         <item
             android:id="@+id/nav_share"
@@ -15,5 +15,11 @@
             android:title="@string/share" />
 
 
+    </group>
+    <group>
+        <item
+            android:id="@+id/nav_favo"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:title="@string/favorites" />
     </group>
 </menu>
