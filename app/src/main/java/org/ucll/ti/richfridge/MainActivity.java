@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
     private RecipeViewModel mRecipeViewModel;
     private DetailViewModel mDetailViewModel;
+    private SettingsViewModel mSettingsViewModel;
 
 
     private SensorManager mSensorManager;
@@ -116,6 +117,8 @@ public class MainActivity extends AppCompatActivity {
 
         mDetailViewModel = ViewModelProviders.of(this).get(DetailViewModel.class);
 
+        mSettingsViewModel = ViewModelProviders.of(this).get(SettingsViewModel.class);
+
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager
@@ -163,7 +166,6 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case R.id.nav_recipes:
                 fragmentClass = RecipesFragment.class;
-
                 break;
             case R.id.nav_share:
                 fragmentClass = ShareFragment.class;
@@ -171,6 +173,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.nav_favo:
                 fragmentClass = RecipesFragment.class;
                 favo = true;
+                break;
+            case R.id.nav_settings:
+                fragmentClass = SettingsFragment.class;
                 break;
             default:
                 fragmentClass = MyFridgeFragment.class;
@@ -230,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleShakeEvent(int count){
-        if(count % 2 == 0){
+        if(mSettingsViewModel.getRandomRecipe()){
             Recipe r = mRecipeViewModel.getRandomRecipe();
             mDetailViewModel.setRecipe(r);
             Toast.makeText(this, "Showing random recipe:" + r.getTitle(), Toast.LENGTH_LONG).show();
