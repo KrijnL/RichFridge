@@ -9,12 +9,7 @@ This app allows the user to enter the ingredients they have in their fridge. It 
 
 The user enters the ingredients in his fridge, these are stored in an SQL database on the phone.
 
-An API is queried using the ingredients, and the results from the API are shown. When the user clicks on an item in the list of recipes, they are taken to a more detailed view of the recipe, but the API doesn't provide the entire recipe. Only a link to the webpage where the recipe can be found.
-If the user is happy with a recipe, they can click on a button to visit the webpage. Recipe's can be favorited for future use.
-
-```
-We use the https://www.food2fork.com/about/api API to get recipes
-```
+The recipes are also taken from an internal database. This should have been an API call, but because of lack of time we decided to take this approach
 
 ## Built With
 
